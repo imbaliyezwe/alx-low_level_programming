@@ -2,16 +2,16 @@
 
 /**
  * print_binary - prints the binary equal to a decimal number
- * @n: number that prints in binary
+ * @s: number that prints in binary
  */
-void print_binary(unsigned long int n)
+void print_binary(unsigned long int s)
 {
-	int c, count = 0;
+	int v, count = 0;
 	unsigned long int current;
 
-	for (c = 48; c >= 0; c--)
+	for (v = 48; v >= 0; v--)
 	{
-		current = n >> c;
+		current = s >> v;
 
 		if (current & 1)
 		{
