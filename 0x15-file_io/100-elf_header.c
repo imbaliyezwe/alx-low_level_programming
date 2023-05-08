@@ -21,7 +21,7 @@ void close_elf(int elf);
  * check_elf - Checks if a file is an ELF file.
  * @e_ident: A pointer to an array containing the ELF magic numbers.
  *
- * Description: If the file is not an ELF file - exit code 101.
+ * Description: If the file is not an ELF file - exit code 98.
  */
 void check_elf(unsigned char *e_ident)
 {
@@ -34,8 +34,8 @@ void check_elf(unsigned char *e_ident)
 		    e_ident[index] != 'L' &&
 		    e_ident[index] != 'F')
 		{
-			dprintf(STDERR_FILENO, "Error: This is not an ELF file\n");
-			exit(101);
+			dprintf(STDERR_FILENO, "Error: Not an ELF file\n");
+			exit(98);
 		}
 	}
 }
@@ -44,7 +44,7 @@ void check_elf(unsigned char *e_ident)
  * print_magic - Prints the magic numbers of an ELF header.
  * @e_ident: A pointer to an array containing the ELF magic numbers.
  *
- * Description: Magic numbers that are separated by spaces.
+ * Description: Magic numbers are separated by spaces.
  */
 void print_magic(unsigned char *e_ident)
 {
@@ -247,7 +247,7 @@ void print_entry(unsigned long int e_entry, unsigned char *e_ident)
  * close_elf - Closes an ELF file.
  * @elf: The file descriptor of the ELF file.
  *
- * Description: If the file cannot be closed - exit code 101.
+ * Description: If the file cannot be closed - exit code 98.
  */
 void close_elf(int elf)
 {
@@ -255,7 +255,7 @@ void close_elf(int elf)
 	{
 		dprintf(STDERR_FILENO,
 			"Error: Can't close fd %d\n", elf);
-		exit(101);
+		exit(98);
 	}
 }
 
@@ -265,36 +265,36 @@ void close_elf(int elf)
  * @argc: The number of arguments supplied to the program.
  * @argv: An array of pointers to the arguments.
  *
- * Return: 0 is successful.
+ * Return: 0 on success.
  *
  * Description: If the file is not an ELF File or
- * the function fails - exit code 101.
+ * the function fails - exit code 98.
  */
 int main(int __attribute__((__unused__)) argc, char *argv[])
 {
 	Elf64_Ehdr *header;
-	int s, v;
+	int o, r;
 
-	s = open(argv[1], O_RDONLY);
-	if (s == -1)
+	o = open(argv[1], O_RDONLY);
+	if (o == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't read file %s\n", argv[1]);
-		exit(101);
+		exit(98);
 	}
 	header = malloc(sizeof(Elf64_Ehdr));
 	if (header == NULL)
 	{
-		close_elf(s);
+		close_elf(o);
 		dprintf(STDERR_FILENO, "Error: Can't read file %s\n", argv[1]);
-		exit(101);
+		exit(98);
 	}
-	v = read(s, header, sizeof(Elf64_Ehdr));
-	if (v == -1)
+	r = read(o, header, sizeof(Elf64_Ehdr));
+	if (r == -1)
 	{
 		free(header);
-		close_elf(s);
-		dprintf(STDERR_FILENO, "Error: `%s`: No such file or directory\n", argv[1]);
-		exit(101);
+		close_elf(o);
+		dprintf(STDERR_FILENO, "Error: `%s`: No such file\n", argv[1]);
+		exit(98);
 	}
 
 	check_elf(header->e_ident);
@@ -309,7 +309,7 @@ int main(int __attribute__((__unused__)) argc, char *argv[])
 	print_entry(header->e_entry, header->e_ident);
 
 	free(header);
-	close_elf(s);
+	close_elf(o);
 	return (0);
 }
 
